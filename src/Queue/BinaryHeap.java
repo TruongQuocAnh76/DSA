@@ -1,11 +1,11 @@
 package PriorityQueue;
 
-public class PriorityQueue {
+public class BinaryHeap {
   private final int DEFAULT_SIZE = 4;
   private int[] array;
   private int size;
 
-  public PriorityQueue() {
+  public BinaryHeap() {
     array = new int[DEFAULT_SIZE];
     size = 0;
   }
