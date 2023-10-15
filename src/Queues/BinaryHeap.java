@@ -1,16 +1,16 @@
-package PriorityQueue;
+package Queue;
 
-public class BinaryHeap {
+public class BinaryHeap<E extends Comparable> {
   private final int DEFAULT_SIZE = 4;
-  private int[] array;
+  private E[] array;
   private int size;
 
   public BinaryHeap() {
-    array = new int[DEFAULT_SIZE];
+    array = (E[]) new Object[DEFAULT_SIZE];
     size = 0;
   }
 
-  public void insert(int value) {
+  public void insert(E value) {
     if (size == 0) array[1] = value;
     else {
       if (size + 1 == array.length) enlarge();
@@ -19,7 +19,7 @@ public class BinaryHeap {
       array[childrenIdx] = value;
 
       while (childrenIdx > 1) {
-        if(array[childrenIdx] <= array[childrenIdx / 2]) break;
+        if(array[childrenIdx].compareTo(array[childrenIdx / 2]) <= 0) break;
         swim(childrenIdx);
         childrenIdx /= 2;
       }
@@ -28,38 +28,38 @@ public class BinaryHeap {
   }
 
   private void swim(int idx) {
-    int temp = array[idx];
+    E temp = array[idx];
     array[idx] = array[idx / 2];
     array[idx / 2] = temp;
   }
 
-  public int max() {
-    if(size == 0) return -1;
+  public E max() {
+    if(size == 0) return null;
     return array[1];
   }
 
-  public int deleteMax() {
-    if(size == 0) return -1;
+  public E deleteMax() {
+    if(size == 0) return null;
 
-    int max = array[1];
+    E max = array[1];
 
     array[1] = array[size];
     int parentIdx = 1;
     int childrenIdx;
     while((parentIdx * 2 <= size)) {
-      childrenIdx = (array[parentIdx * 2] < array[parentIdx * 2 + 1]) ? parentIdx * 2 + 1 : parentIdx * 2; // take the index of the larger child
-      if(array[parentIdx] >= array[childrenIdx]) break;
+      childrenIdx = (array[parentIdx * 2].compareTo(array[parentIdx * 2 + 1]) < 0) ? parentIdx * 2 + 1 : parentIdx * 2; // take the index of the larger child
+      if(array[parentIdx].compareTo(array[childrenIdx]) >= 0) break;
       sink(parentIdx, childrenIdx);
       parentIdx = childrenIdx;
     }
 
-    array[size] = 0;
+    array[size] = null;
     size--;
     return max;
   }
 
   private void sink(int parentIdx, int childrenIdx) {
-    int temp = array[parentIdx];
+    E temp = array[parentIdx];
     array[parentIdx] = array[childrenIdx];
     array[childrenIdx] = temp;
   }
@@ -82,7 +82,7 @@ public class BinaryHeap {
   }
 
   private void enlarge() {
-    int[] temp = new int[array.length * 2];
+    E[] temp = (E[]) new Object[array.length * 2];
     System.arraycopy(array, 0, temp, 0, array.length);
     array = temp;
   }
