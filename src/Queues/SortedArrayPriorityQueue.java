@@ -1,7 +1,8 @@
 package b1;
 
 public class SortedArrayPriorityQueue<K extends Comparable, E> implements PriorityQueueInterface {
-  private final int defaultsize = 1000;
+  // in descending order
+  private final int defaultsize = 10;
   private ArrEntry<K, E>[] array;
   private int n = 0;
 
@@ -21,18 +22,34 @@ public class SortedArrayPriorityQueue<K extends Comparable, E> implements Priori
 
   @Override
   public void insert(Entry entry) {
-    if (n == array.length) enlarge();
+    if (n + 1 == array.length) enlarge();
     K key = (K) entry.getKey();
-    int i;
-    for (i = 0; i < n; i++) // find position i to insert
-    if (array[i].getKey().compareTo(key) > 0) {
-        for (int j = n; j > i; j--) // shift all elements after i to the right
-        array[j] = array[j - 1];
-        break;
-      }
-    // insert
-    array[i] = (ArrEntry<K, E>) entry;
+
+    if (n == 0) array[n] = (ArrEntry<K, E>) entry;
+    else {
+      int idx = binarySearch(array, 0, n, key);
+      if (idx < 0) idx = -idx - 1;
+      // shift the array
+      System.arraycopy(array, idx, array, idx + 1, n - idx);
+
+      array[idx] = (ArrEntry<K, E>) entry;
+    }
     n++;
+  }
+
+  private int binarySearch(ArrEntry[] a, int fromIndex, int toIndex, K key) {
+    int low = fromIndex;
+    int high = toIndex - 1;
+
+    while (low <= high) {
+      int mid = (low + high) >>> 1;
+      ArrEntry<K, E> midVal = a[mid];
+
+      if (midVal.key.compareTo(key) > 0) low = mid + 1;
+      else if (midVal.key.compareTo(key) < 0) high = mid - 1;
+      else return mid; // key found
+    }
+    return -(low + 1); // key not found.
   }
 
   private void enlarge() {
@@ -50,16 +67,13 @@ public class SortedArrayPriorityQueue<K extends Comparable, E> implements Priori
   @Override
   public Entry removeMin() {
     if (n == 0) throw new IllegalStateException("mty queue");
-    Entry<K, E> min = array[0];
-    for (int i = 0; i < n; i++) array[i] = array[i + 1];
-
     n--;
-    return min;
+    return array[n];
   }
 
   @Override
   public Entry min() {
-    return array[0];
+    return array[n - 1];
   }
 
   @Override

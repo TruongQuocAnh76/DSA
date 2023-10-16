@@ -49,9 +49,7 @@ public class UnsortedArrayPriorityQueue<K extends Comparable, E> implements Prio
             }
         }
         // remove min
-        for (int i = minIndex; i < n - 1; i++){
-            array[i] = array[i + 1];
-        }
+        System.arraycopy(array, minIndex + 1, array, minIndex, n - minIndex - 1);
         n--;
         return min;
     }
